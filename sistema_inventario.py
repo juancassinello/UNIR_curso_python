@@ -10,9 +10,9 @@ class Producto:
             self.nombre = nombre
 
             # validación:
-            # --- debe ser un float o un int.
+            # --- debe ser un float.
             # --- debe ser mayor o igual que cero.
-            if (type(precio) is float or type(precio) is int) and precio >= 0:
+            if type(precio) is float and precio >= 0:
                 self.precio = precio
 
                 # validación:
@@ -24,20 +24,20 @@ class Producto:
                 else:
                     print("La cantidad debe ser un número entero mayor o igual a cero")
             else:
-                print("El precio debe ser un entero o decimal, y mayor o igual a cero")
+                print("El precio debe ser un valor decimal, y mayor o igual a cero")
         else:
             print("El nombre del producto debe ser texto y no puede estar vacío")
 
     def actualizar_precio(self, nuevo_precio):
         
         # validación:
-        # --- debe ser un float o un int.
+        # --- debe ser un float.
         # --- debe ser mayor o igual que cero.
-        if (type(nuevo_precio) is float or type(nuevo_precio) is int) and nuevo_precio >= 0:
+        if type(nuevo_precio) is float and nuevo_precio >= 0:
             self.precio = nuevo_precio
 
         else:
-            print("El nuevo precio debe ser un entero o decimal, y mayor o igual a cero")
+            print("El nuevo precio debe ser un valor decimal, y mayor o igual a cero")
 
     def actualizar_cantidad(self, nueva_cantidad):
         # validación:
@@ -57,13 +57,15 @@ class Producto:
 
 class Inventario:
 
-    lista_productos = []
+    def __init__(self):
+        self.lista_productos = []
 
     def agregar_producto(self, producto):
 
         if type(producto) is Producto:
              self.lista_productos.append(producto)
-        
+             print("Producto agregado correctamente")
+
         else:
             print("El parámetro recibido para agregar un producto al inventario no es del tipo correcto.")
 
@@ -73,13 +75,13 @@ class Inventario:
             for l in self.lista_productos:
                 if l.nombre.lower() == nombre.lower():
                     return l
-                else:
-                    return None
+            
+            # Si no hemos encontrado el nombre, devolvemos un None.
+            return None        
         else:
             print("El nombre del producto debe ser texto y no puede estar vacío")
 
     def calcular_valor_inventario(self):
-        
         valor_total = 0
 
         for l in self.lista_productos:
@@ -91,24 +93,56 @@ class Inventario:
         for l in self.lista_productos:
             print(l)
 
-    def menu_principal():
-        '''
-            MENÚ
-            1. Agregar producto
-            2. Buscar producto
-            3. Listar productos
-            4. Calcular valor total del inventario
-            5. Salir
-        '''
+    def menu_principal(self):
+
+        continuar = True
+
+        while continuar:
+            try:
+
+                print("MENÚ")
+                print("1. Agregar producto")
+                print("2. Buscar producto")
+                print("3. Listar productos")
+                print("4. Calcular valor total del inventario")
+                print("5. Salir")
+
+                opcion = int(input("Ingrese el número de opción que desee: "))
+
+                match opcion:
+                    case 1:
+                        producto_nombre = str(input("Introduzca el nombre del producto que desee: "))
+                        
+                        if producto_nombre.strip():
+                            producto_precio = float(input("Introduzca el precio: "))
+                            producto_cantidad = int(input("Introduzca la cantidad del producto: "))
+                            
+                            producto = Producto(producto_nombre, producto_precio, producto_cantidad)
+                            inventario.agregar_producto(producto)
+                        
+                        else:
+                            print("El nombre del producto no puede estar vacío")
+
+                    case 2:
+                        producto_nombre = input("Introduzca el nombre del producto a buscar: ")
+                        if inventario.buscar_producto(producto_nombre) != None:
+                            print("Producto encontrado en el inventario")
+                        else:
+                            print("Producto no encontrado en el inventario")
+                    
+                    case 3:
+                        self.listar_productos()
+                    
+                    case 4:
+                        print(f"El valor total del inventario es de {self.calcular_valor_inventario()} euros")
+                    
+                    case 5:
+                        continuar = False
+
+            except ValueError:
+                print("Valor incorrecto. Vuelva a comenzar hasta hacerlo bien")
+
 
 if __name__ == "__main__":
-    # instancia un objeto de la clase Inventario y llama a la función menu_principal() para iniciar la aplicación
-
-    inventario = Inventario()    
-    pera = Producto("Pera", 7.9, 10)
-    manzana = Producto("Manzana", 3.5, 100)
-
-    inventario.agregar_producto(pera)
-    inventario.agregar_producto(manzana)
-
-    print(inventario.calcular_valor_inventario())
+    inventario = Inventario()
+    inventario.menu_principal()
